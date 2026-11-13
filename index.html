@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You — Graduation Day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#79565c; --muted:#b78d91; --rose:#c4778b; --gold:#c9a27e; --gold2:#e6c9a4;
+  --serif:"Cormorant Garamond","Georgia","Times New Roman",serif;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; width:100vw; height:100vh; overflow:hidden; color:var(--ink);
+  font-family:var(--serif);
+  background:
+    radial-gradient(ellipse at 18% 18%,#fffaf6 0,transparent 45%),
+    radial-gradient(ellipse at 85% 75%,#f3d9d8 0,transparent 45%),
+    linear-gradient(145deg,#f9eeed,#f2e2df);
+  display:flex; justify-content:center; align-items:center;
+}
+
+/* ===== Họa tiết nền sang trọng ===== */
+#deco{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+.frame{position:absolute; inset:14px; border:1px solid var(--gold); opacity:.75}
+.frame::after{content:""; position:absolute; inset:6px; border:1px solid var(--gold2); opacity:.9}
+.corner{position:absolute; width:clamp(110px,19vw,240px); height:auto; opacity:.9}
+.c-tl{top:8px; left:8px}
+.c-tr{top:8px; right:8px; transform:scaleX(-1)}
+.c-bl{bottom:8px; left:8px; transform:scaleY(-1)}
+.c-br{bottom:8px; right:8px; transform:scale(-1,-1)}
+.rings{position:absolute; left:50%; top:50%; width:min(130vh,130vw); height:min(130vh,130vw); transform:translate(-50%,-50%); opacity:.5; animation:spin 240s linear infinite}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.divider{position:absolute; left:50%; transform:translateX(-50%); width:min(260px,40vw)}
+.d-top{top:20px} .d-bot{bottom:20px; transform:translateX(-50%) scaleY(-1)}
+.bokeh{position:absolute; border-radius:50%; background:radial-gradient(circle,#fff6e6cc,#e6c9a422 60%,transparent 70%); animation:glow 6s ease-in-out infinite alternate}
+@keyframes glow{to{opacity:.35; transform:scale(1.15)}}
+.petal{position:absolute; top:-30px; width:12px; height:16px; border-radius:0 100% 0 100%; opacity:0; animation:fall linear infinite}
+@keyframes fall{0%{transform:translate(0,0) rotate(0); opacity:0} 10%{opacity:.75} 100%{transform:translate(90px,112vh) rotate(540deg); opacity:0}}
+.dust{position:absolute; width:3px; height:3px; border-radius:50%; background:#fff; box-shadow:0 0 9px #e6c9a4; animation:twinkle 3s ease-in-out infinite alternate}
+@keyframes twinkle{to{opacity:.15; transform:scale(.5)}}
+.hearts{position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0}
+.heart{position:absolute; color:#ef9bad; opacity:0; animation:floatUp linear infinite; filter:drop-shadow(0 2px 4px #eaa0ad44)}
+@keyframes floatUp{0%{transform:translateY(30px) rotate(-12deg); opacity:0} 15%{opacity:.5} 85%{opacity:.45} 100%{transform:translateY(-110vh) rotate(18deg); opacity:0}}
+
+/* ===== Slide ===== */
+.slide{
+  position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:34px 24px; text-align:center; opacity:0; visibility:hidden;
+  transition:opacity .8s ease, transform .8s ease; transform:scale(.96); z-index:1;
+}
+.slide.active{opacity:1; visibility:visible; transform:scale(1); z-index:2}
+
+/* Khung thẻ: viền vàng kép */
+.card-box{
+  width:min(760px,94vw); padding:30px 34px; background:rgba(255,253,252,.93);
+  border:1px solid var(--gold); border-radius:3px; backdrop-filter:blur(6px);
+  box-shadow:0 18px 50px #b9878c2b, inset 0 0 0 6px #fffdfc, inset 0 0 0 7px var(--gold2);
+}
+h1{font-size:clamp(34px,6vw,60px); color:#bf7185; margin:10px 0; font-weight:500; font-family:var(--serif); line-height:1.1}
+h1 em{color:#df8fa1; font-style:italic}
+h2{font-family:var(--serif); font-weight:500}
+.title{font-size:clamp(24px,3.4vw,32px); color:var(--rose); margin:0 0 6px}
+p{font-size:17px; line-height:1.7; color:#86666a; font-family:var(--serif)}
+.sub{font-size:15px; font-style:italic; color:var(--muted); margin:6px 0 0}
+.kicker{font:italic 18px var(--serif); letter-spacing:2px; color:#c58b98}
+
+input{width:100%; padding:13px; border:1px solid #e8c8ce; background:#fff; border-radius:3px; text-align:center; font-size:17px; outline:none; margin-top:15px; font-family:var(--serif); color:var(--ink)}
+button{margin-top:15px; padding:12px 24px; border:0; background:linear-gradient(135deg,#d98b9d,#c9a27e); color:#fff; font:16px var(--serif); cursor:pointer; border-radius:3px; transition:transform .2s}
+button:hover{transform:translateY(-2px)}
+#error{height:20px; color:#ce7189; font:12px Arial; margin-top:8px}
+
+/* ===== Ảnh chân dung LỚN ===== */
+.stage{position:relative; width:100%; height:min(62vh,540px); margin:8px auto; display:flex; align-items:flex-end; justify-content:center}
+.portrait-frame{
+  position:relative; width:min(88vw,420px); height:100%; display:flex; align-items:flex-end; justify-content:center;
+  filter:drop-shadow(0 0 12px rgba(255,255,255,.9)) drop-shadow(0 12px 22px #ad7d8044);
+}
+.portrait{max-width:100%; max-height:100%; object-fit:contain; display:block}
+
+.stage.g{display:grid; grid-template-columns:100%; grid-template-rows:100%; height:min(52vh,470px); align-items:end}
+.pframe{grid-area:1/1; position:relative; justify-self:center; width:min(88vw,400px); height:100%; display:flex; align-items:flex-end; justify-content:center; opacity:0; transition:opacity .7s ease; filter:drop-shadow(0 0 12px rgba(255,255,255,.9)) drop-shadow(0 12px 22px #ad7d8044)}
+.pframe.active{opacity:1}
+.grad-cap{position:absolute; top:-8px; left:50%; width:clamp(84px,22vw,124px); height:auto; opacity:0; transform:translateX(-50%) translateY(-90px) rotate(-28deg); filter:drop-shadow(0 6px 8px #5a3d4655)}
+.pframe.active .grad-cap{opacity:1; transform:translateX(-50%) translate(-8px,0) rotate(-7deg); transition:transform 1.1s cubic-bezier(.2,.9,.3,1.3) .3s, opacity .5s .3s}
+.prop{position:absolute; bottom:12px; width:clamp(58px,17vw,92px); height:auto; opacity:0; filter:drop-shadow(0 6px 8px #ad7d8055)}
+.diploma{left:-7%; transform:translate(-90px,40px) rotate(-40deg)}
+.bouquet{right:-7%; transform:translate(90px,40px) rotate(40deg)}
+.pframe.active .diploma{opacity:1; transform:none; transition:transform 1s cubic-bezier(.2,.9,.3,1.3) .5s, opacity .5s .5s}
+.pframe.active .bouquet{opacity:1; transform:none; transition:transform 1s cubic-bezier(.2,.9,.3,1.3) .7s, opacity .5s .7s}
+
+/* Thanh loading với mũ tốt nghiệp chạy theo */
+.loader{width:min(520px,100%); margin:14px auto 2px; padding:0 22px}
+.track{position:relative; height:10px; border-radius:10px; background:#f3e1e1; border:1px solid var(--gold2); box-shadow:inset 0 1px 3px #b9878c33}
+.fill{height:100%; width:25%; border-radius:10px; background:linear-gradient(90deg,#f5a9b8,#e987a0 55%,#c9a27e); transition:width .9s cubic-bezier(.3,.8,.3,1); position:relative; overflow:hidden}
+.fill::after{content:""; position:absolute; inset:0; background:linear-gradient(100deg,transparent 30%,#ffffff88 50%,transparent 70%); animation:shine 2s linear infinite}
+@keyframes shine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.tick{position:absolute; top:50%; width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%; background:#fff; border:1.5px solid var(--gold); transition:background .4s}
+.tick.on{background:var(--gold)}
+.runner{position:absolute; top:-40px; left:25%; width:50px; height:auto; transform:translateX(-50%); transition:left .9s cubic-bezier(.3,.8,.3,1); filter:drop-shadow(0 4px 5px #5a3d4655); animation:bob 1.6s ease-in-out infinite alternate}
+@keyframes bob{to{margin-top:-5px}}
+.lcount{margin-top:9px; font:italic 15px var(--serif); color:var(--muted)}
+
+/* Slide 6: thiệp */
+.letter-card{
+  width:min(900px,94vw); padding:30px; background:rgba(255,253,252,.95); border:1px solid var(--gold); border-radius:3px;
+  box-shadow:0 18px 50px #b9878c2b, inset 0 0 0 6px #fffdfc, inset 0 0 0 7px var(--gold2);
+  text-align:left; display:grid; grid-template-columns:1.1fr 1.2fr; gap:28px; align-items:center;
+}
+.letter-photo{width:100%; height:min(62vh,470px); background:#f5e4e3; overflow:hidden; border-radius:3px; border:3px solid #fff; box-shadow:0 6px 16px rgba(0,0,0,.1), 0 0 0 1px var(--gold2)}
+.letter-photo img{width:100%; height:100%; object-fit:cover; display:block}
+.letter-copy h2{font-size:34px; color:var(--rose); margin:0 0 10px}
+.letter-copy p{font-size:17px; line-height:1.85; margin:0}
+
+/* Slide 7: album */
+.memory-container{display:flex; gap:22px; justify-content:center; margin-top:18px; flex-wrap:wrap}
+.memory-polaroid{width:min(210px,28vw); background:#fff; padding:11px 11px 14px; box-shadow:0 10px 24px #ad7d8033; transform:rotate(-3deg); border-radius:2px}
+.memory-polaroid:nth-child(2){transform:rotate(3deg); margin-top:18px}
+.memory-polaroid img{width:100%; height:min(34vh,290px); object-fit:cover; display:block}
+.memory-polaroid span{display:block; font:italic 16px var(--serif); color:var(--ink); margin-top:9px}
+
+.final-wish{font-size:clamp(20px,2.6vw,26px); color:var(--rose); line-height:1.8; max-width:600px; font-style:italic; margin:0 auto}
+
+.nav-hint{position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:rgba(255,255,255,.88); padding:7px 18px; border-radius:20px; font:italic 14px var(--serif); color:#a57c83; box-shadow:0 4px 12px #b9878c22; z-index:100; cursor:pointer; user-select:none; white-space:nowrap}
+.upload{margin-top:15px; font:13px Arial,sans-serif; color:#a57c83}
+.upload label{display:inline-block; padding:8px 14px; border:1px solid #e9c5cb; background:#fff9f8; border-radius:22px; cursor:pointer}
+.upload input{display:none}
+
+@media(max-width:640px){
+  .letter-card{grid-template-columns:1fr; text-align:center; gap:16px; padding:22px}
+  .letter-photo{height:min(40vh,320px)}
+  .card-box{padding:22px 18px}
+  .stage{height:min(54vh,460px)}
+  .stage.g{height:min(46vh,380px)}
+  .memory-polaroid img{height:22vh}
+  .nav-hint{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.rings,.petal,.heart,.bokeh{animation:none}}
+</style>
+</head>
+<body>
+
+<!-- Định nghĩa họa tiết -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e6c9a4"/><stop offset=".5" stop-color="#c9a27e"/><stop offset="1" stop-color="#e8b9bf"/>
+    </linearGradient>
+    <symbol id="cornerSym" viewBox="0 0 220 220">
+      <g fill="none" stroke="url(#gold)" stroke-width="1.3" stroke-linecap="round">
+        <path d="M8 212 C8 110 60 40 212 8"/>
+        <path d="M22 212 C26 126 70 62 212 24" opacity=".7"/>
+        <path d="M8 150 C14 90 50 52 110 36" opacity=".6"/>
+        <circle cx="40" cy="40" r="17"/><circle cx="40" cy="40" r="11"/><circle cx="40" cy="40" r="5"/>
+        <path d="M40 23 C52 28 56 40 48 48 C40 54 30 50 28 42"/>
+        <path d="M26 66 C14 82 14 100 24 114"/><path d="M66 26 C82 14 100 14 114 24"/>
+      </g>
+      <g fill="url(#gold)" opacity=".85">
+        <path d="M30 128 q-20 -4 -24 -24 q20 4 24 24z"/><path d="M42 100 q-20 -4 -24 -24 q20 4 24 24z" opacity=".7"/>
+        <path d="M128 30 q-4 -20 -24 -24 q4 20 24 24z"/><path d="M100 42 q-4 -20 -24 -24 q4 20 24 24z" opacity=".7"/>
+        <circle cx="150" cy="22" r="2.4"/><circle cx="22" cy="150" r="2.4"/><circle cx="196" cy="12" r="2"/><circle cx="12" cy="196" r="2"/>
+      </g>
+    </symbol>
+    <symbol id="divSym" viewBox="0 0 260 24">
+      <g fill="none" stroke="url(#gold)" stroke-width="1.2">
+        <path d="M6 12 H108"/><path d="M152 12 H254"/>
+        <path d="M130 3 L139 12 L130 21 L121 12 Z"/>
+        <path d="M112 12 q8 -8 12 0 q-4 8 -12 0z"/><path d="M148 12 q-8 -8 -12 0 q4 8 12 0z"/>
+      </g>
+    </symbol>
+    <symbol id="capSym" viewBox="0 0 120 92">
+      <path d="M30 44 v22 c0 12 60 12 60 0 v-22 z" fill="#5a3d46"/>
+      <path d="M30 56 c10 9 50 9 60 0 v10 c0 12 -60 12 -60 0z" fill="#46303a"/>
+      <polygon points="60,8 117,33 60,58 3,33" fill="#6e4954" stroke="url(#gold)" stroke-width="2" stroke-linejoin="round"/>
+      <polygon points="60,8 117,33 60,33" fill="#ffffff22"/>
+      <path d="M60 33 L102 43 V70" fill="none" stroke="url(#gold)" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M102 66 l-6 14 h12z" fill="url(#gold)"/><path d="M99 70 v10 M102 70 v11 M105 70 v10" stroke="#fff6e8" stroke-width=".8" opacity=".7"/>
+      <circle cx="60" cy="33" r="4" fill="url(#gold)"/>
+    </symbol>
+    <symbol id="diplomaSym" viewBox="0 0 100 100">
+      <g transform="rotate(-30 50 50)">
+        <rect x="8" y="36" width="84" height="28" rx="14" fill="#fff6e8" stroke="#c9a27e" stroke-width="2"/>
+        <ellipse cx="15" cy="50" rx="6" ry="14" fill="#f1dec2" stroke="#c9a27e" stroke-width="1.5"/>
+        <ellipse cx="85" cy="50" rx="6" ry="14" fill="#f1dec2" stroke="#c9a27e" stroke-width="1.5"/>
+        <rect x="44" y="34" width="12" height="32" fill="#e987a0"/>
+        <path d="M50 50 l-11 -10 v20z M50 50 l11 -10 v20z" fill="#d9738c"/><circle cx="50" cy="50" r="3.5" fill="#c9a27e"/>
+      </g>
+    </symbol>
+    <symbol id="bouquetSym" viewBox="0 0 100 110">
+      <g fill="#9db88a"><ellipse cx="24" cy="46" rx="7" ry="16" transform="rotate(-35 24 46)"/><ellipse cx="76" cy="46" rx="7" ry="16" transform="rotate(35 76 46)"/><ellipse cx="38" cy="28" rx="6" ry="14" transform="rotate(-15 38 28)"/><ellipse cx="62" cy="28" rx="6" ry="14" transform="rotate(15 62 28)"/></g>
+      <g stroke="#fff" stroke-width="1.2" fill="none" opacity=".85">
+        <circle cx="34" cy="46" r="15" fill="#f5a9b8"/><circle cx="66" cy="46" r="15" fill="#e987a0"/><circle cx="50" cy="30" r="15" fill="#f8c5cf"/><circle cx="50" cy="52" r="14" fill="#d9738c"/>
+        <path d="M34 46 q5-7 8 0 q-4 6-8 0 M66 46 q5-7 8 0 q-4 6-8 0 M50 30 q5-7 8 0 q-4 6-8 0 M50 52 q5-7 8 0 q-4 6-8 0"/>
+      </g>
+      <polygon points="50,108 16,60 84,60" fill="#fbe3e6" stroke="#e6c9a4" stroke-width="1.5"/>
+      <path d="M30 80 q20 8 40 0" stroke="#c9a27e" stroke-width="3" fill="none"/><circle cx="50" cy="86" r="4" fill="#e987a0"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div id="deco">
+  <div class="frame"></div>
+  <svg class="rings" viewBox="0 0 400 400" fill="none" stroke="url(#gold)" stroke-width=".5">
+    <circle cx="200" cy="200" r="195" stroke-dasharray="2 5"/>
+    <circle cx="200" cy="200" r="165"/>
+    <circle cx="200" cy="200" r="150" stroke-dasharray="10 6"/>
+    <circle cx="200" cy="200" r="118" opacity=".7"/>
+    <g id="petals8"></g>
+  </svg>
+  <svg class="corner c-tl" viewBox="0 0 220 220"><use href="#cornerSym"/></svg>
+  <svg class="corner c-tr" viewBox="0 0 220 220"><use href="#cornerSym"/></svg>
+  <svg class="corner c-bl" viewBox="0 0 220 220"><use href="#cornerSym"/></svg>
+  <svg class="corner c-br" viewBox="0 0 220 220"><use href="#cornerSym"/></svg>
+  <svg class="divider d-top" viewBox="0 0 260 24"><use href="#divSym"/></svg>
+  <svg class="divider d-bot" viewBox="0 0 260 24"><use href="#divSym"/></svg>
+  <div id="fx"></div>
+</div>
+<div class="hearts" id="hearts"></div>
+
+<!-- TRANG 1 -->
+<div class="slide active" id="slide-1">
+  <div class="card-box" style="width:min(430px,94vw); padding:38px 28px">
+    <div style="font-size:42px; color:#d98b9d">♡</div>
+    <h2 class="title" style="font-size:32px">A little surprise for you</h2>
+    <p style="font-style:italic; color:#a98489; margin:6px 0 0">Có một lời chúc video nhỏ dành riêng cho bạn.<br>Nhập mật khẩu để mở món quà nhé!</p>
+    <form id="passwordForm">
+      <input id="password" type="password" placeholder="Mật khẩu (1234)..." autocomplete="off" autofocus>
+      <button type="submit">Open my letter ♡</button>
+    </form>
+    <div id="error"></div>
+  </div>
+</div>
+
+<!-- TRANG 2 -->
+<div class="slide" id="slide-2">
+  <div class="card-box" style="padding:50px 34px">
+    <div class="kicker">✦ a day to remember ✦</div>
+    <h1>Congratulations,<br><em id="nameHeading">beautiful graduate</em> ♡</h1>
+    <p class="sub" style="font-size:20px">Today is all about you.</p>
+  </div>
+</div>
+
+<!-- TRANG 3: 4 ảnh + thanh loading -->
+<div class="slide" id="slide-3">
+  <div class="card-box">
+    <h2 class="title" id="capText">Khoảnh khắc tỏa sáng</h2>
+    <div class="stage g" id="stage"></div>
+    <div class="loader">
+      <div class="track">
+        <div class="fill" id="fill"></div>
+        <i class="tick" style="left:25%"></i><i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:100%"></i>
+        <svg class="runner" id="runner" viewBox="0 0 120 92"><use href="#capSym"/></svg>
+      </div>
+      <div class="lcount" id="lcount">Ảnh 1/4</div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANG 6 -->
+<div class="slide" id="slide-4">
+  <div class="letter-card">
+    <div class="letter-photo"><img id="imgSlide6" alt="Ảnh kỷ niệm"></div>
+    <div class="letter-copy">
+      <div style="font:italic 15px var(--serif); color:#c28e98; letter-spacing:1px; margin-bottom:6px">A new chapter begins · 2026</div>
+      <h2>Dear <span id="nameInCard">beautiful graduate</span>,</h2>
+      <p>Chúc mừng bạn đã hoàn thành một chặng đường thật đáng nhớ! Mong rằng tất cả nỗ lực, những ngày tháng cố gắng sẽ đưa bạn đến với thật nhiều điều tuyệt vời. Chúc bạn luôn tự tin và hạnh phúc. ♡</p>
+    </div>
+  </div>
+</div>
+
+<!-- TRANG 7 -->
+<div class="slide" id="slide-5">
+  <div class="card-box" style="width:min(820px,94vw)">
+    <h2 class="title">Album kỷ niệm thanh xuân 📸</h2>
+    <div class="memory-container">
+      <div class="memory-polaroid"><img id="mem1" alt="Memory"><span>♡ Memory</span></div>
+      <div class="memory-polaroid"><img id="mem2" alt="Memory"><span>✧ Success</span></div>
+      <div class="memory-polaroid"><img id="mem3" alt="Memory"><span>♡ Smile</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANG 8 -->
+<div class="slide" id="slide-6">
+  <div class="card-box" style="padding:44px 34px">
+    <div style="font-size:36px; margin-bottom:10px; color:#d98b9d">♡ ✧ ♡</div>
+    <p class="final-wish">"Chúc bạn luôn giữ được sự tự tin, nhiệt huyết và nụ cười rạng rỡ này. Chúc cho chặng đường phía trước của bạn sẽ ngập tràn ánh sáng và niềm vui!"</p>
+    <div class="upload">
+      <label for="photoUpload">＋ Đổi ảnh khác (chọn tối đa 4 ảnh)</label>
+      <input id="photoUpload" type="file" accept="image/*" multiple>
+    </div>
+  </div>
+</div>
+
+<div class="nav-hint" id="navHint">Click chuột hoặc bấm phím Mũi tên / Space để chuyển trang ➔</div>
+
+<script>
+  const SETTINGS = { password: "1234", name: "beautiful graduate" };
+  const defaultImageSrc = "image.png"; // đổi thành ảnh của bạn (đường dẫn hoặc base64)
+  const defaultImageSrc1 = "image3.png";
+  const defaultImageSrc2 = "image2.png";
+  const defaultImageSrc3 = "image1.png";
+  const defaultImageSrc4 = "image4.png";
+  document.getElementById("nameHeading").textContent = SETTINGS.name;
+  document.getElementById("nameInCard").textContent = SETTINGS.name;
+
+  const rnd = (a,b)=>a+Math.random()*(b-a);
+
+  // Hoa văn 8 cánh trong vòng tròn nền
+  const pg = document.getElementById("petals8");
+  for(let i=0;i<8;i++){
+    pg.innerHTML += `<ellipse cx="200" cy="140" rx="14" ry="46" transform="rotate(${i*45} 200 200)" opacity=".6"/>`;
+  }
+
+  // Bụi vàng, quầng sáng, cánh hoa rơi
+  const fx = document.getElementById("fx");
+  for(let i=0;i<50;i++){
+    const s=document.createElement("i"); s.className="dust";
+    s.style.cssText=`left:${rnd(0,100)}%;top:${rnd(0,100)}%;animation-delay:${rnd(0,4)}s;animation-duration:${rnd(2,5)}s`;
+    fx.appendChild(s);
+  }
+  for(let i=0;i<7;i++){
+    const b=document.createElement("div"); b.className="bokeh"; const d=rnd(80,220);
+    b.style.cssText=`width:${d}px;height:${d}px;left:${rnd(-5,95)}%;top:${rnd(-5,90)}%;animation-delay:${rnd(0,5)}s`;
+    fx.appendChild(b);
+  }
+  const petalColors=["#f3b6c2","#f8d3d6","#e6c9a4","#efa6b6"];
+  for(let i=0;i<18;i++){
+    const p=document.createElement("div"); p.className="petal";
+    p.style.cssText=`left:${rnd(-5,100)}%;background:${petalColors[i%4]};width:${rnd(9,15)}px;height:${rnd(12,20)}px;animation-duration:${rnd(12,24)}s;animation-delay:${-rnd(0,24)}s`;
+    fx.appendChild(p);
+  }
+
+  // Trái tim bay
+  const hearts = document.getElementById("hearts");
+  for(let i=0;i<16;i++){
+    const h=document.createElement("span"); h.className="heart";
+    h.textContent=["♡","♥","❤"][i%3];
+    h.style.cssText=`left:${rnd(0,100)}%;bottom:${rnd(-10,35)}%;font-size:${rnd(12,28)}px;animation-duration:${rnd(10,23)}s;animation-delay:${-rnd(0,20)}s`;
+    hearts.appendChild(h);
+  }
+
+  // ===== Ảnh =====
+  let PHOTOS = [defaultImageSrc1,defaultImageSrc2,defaultImageSrc3,defaultImageSrc4];
+  const CAPTIONS = ["Studying","Playing","Community","Working"];
+  const FEATURES = [[],["cap"],["cap","props"],["cap","props"]]; // hiệu ứng theo từng ảnh
+  const stage = document.getElementById("stage");
+  stage.innerHTML = FEATURES.map((f,i)=>`<div class="pframe"><img class="portrait" id="ph${i+1}" alt="Ảnh ${i+1}">`
+    + (f.includes("cap") ? '<svg class="grad-cap" viewBox="0 0 120 92"><use href="#capSym"/></svg>' : '')
+    + (f.includes("props") ? '<svg class="prop diploma" viewBox="0 0 100 100"><use href="#diplomaSym"/></svg><svg class="prop bouquet" viewBox="0 0 100 110"><use href="#bouquetSym"/></svg>' : '')
+    + '</div>').join("");
+  const frames = [...stage.children];
+  const ticks = [...document.querySelectorAll(".tick")];
+
+  function applyPhotos(){
+    PHOTOS.forEach((p,i)=>{ document.getElementById("ph"+(i+1)).src = p; });
+    document.getElementById("imgSlide6").src = defaultImageSrc;
+    ["mem1","mem2","mem3"].forEach((id,i)=>{ document.getElementById(id).src = PHOTOS[i+1]; });
+  }
+  applyPhotos();
+
+  // ===== Điều hướng =====
+  const GAL = 3, totalSlides = 6;
+  let currentSlide = 1, step = 1, autoT = null;
+
+  function setStep(n){
+    step = Math.max(1, Math.min(4, n));
+    frames.forEach((f,i)=>f.classList.toggle("active", i+1===step));
+    document.getElementById("fill").style.width = (step*25)+"%";
+    document.getElementById("runner").style.left = (step*25)+"%";
+    ticks.forEach((t,i)=>t.classList.toggle("on", i<step));
+    document.getElementById("capText").textContent = CAPTIONS[step-1];
+    document.getElementById("lcount").textContent = step<4 ? `Ảnh ${step}/4` : "Hoàn tất 4/4 ♡";
+    document.getElementById("navHint").textContent = step<4 ? `Ảnh ${step}/4 — click để xem ảnh tiếp theo ➔` : "Đã đủ 4 ảnh — đang mở lời chúc ♡";
+    clearTimeout(autoT);
+    if(step===4) autoT = setTimeout(()=>{ if(currentSlide===GAL) showSlide(4); }, 2400);
+  }
+
+  function showSlide(n){
+    clearTimeout(autoT);
+    currentSlide = (n>totalSlides || n<1) ? 1 : n;
+    document.querySelectorAll(".slide").forEach((s,idx)=>s.classList.toggle("active", idx+1===currentSlide));
+    document.getElementById("navHint").textContent = currentSlide===totalSlides
+      ? "Đã đến trang cuối (Click để quay lại từ đầu)"
+      : `Trang ${currentSlide}/${totalSlides} — Click hoặc bấm phím để tiếp tục ➔`;
+    if(currentSlide===GAL) setStep(1);
+  }
+  function next(){
+    if(currentSlide===GAL && step<4) setStep(step+1);
+    else showSlide(currentSlide+1);
+  }
+  function prev(){
+    if(currentSlide===GAL && step>1) setStep(step-1);
+    else showSlide(currentSlide-1);
+  }
+
+  document.getElementById("passwordForm").addEventListener("submit", e=>{
+    e.preventDefault();
+    const entered=document.getElementById("password").value, error=document.getElementById("error");
+    if(entered===SETTINGS.password){ showSlide(2); }
+    else { error.textContent="Mật khẩu chưa đúng, thử lại nhé ♡"; document.getElementById("password").select(); }
+  });
+  document.body.addEventListener("click", e=>{
+    if(["INPUT","BUTTON","LABEL"].includes(e.target.tagName) || (currentSlide===1 && e.target.closest("#slide-1"))) return;
+    next();
+  });
+  document.addEventListener("keydown", e=>{
+    if(currentSlide===1) return;
+    if(e.key==="ArrowRight" || e.key===" ") next();
+    else if(e.key==="ArrowLeft") prev();
+  });
+
+  // Tải tối đa 4 ảnh mới (ít hơn 4 thì lặp lại)
+  document.getElementById("photoUpload")?.addEventListener("change", e=>{
+    const files=[...e.target.files].slice(0,4); if(!files.length) return;
+    const urls=files.map(f=>URL.createObjectURL(f));
+    PHOTOS=[0,1,2,3].map(i=>urls[i%urls.length]);
+    applyPhotos();
+  });
+</script>
+</body>
+</html>
